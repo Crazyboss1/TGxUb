@@ -36,41 +36,7 @@ def send_restart_message(bots_restarted, bots_errors):
             message_text += f"{bot_name}    {error}\n"
     BOT.send_message(chat_id=int(LOG_CHANNEL), text=message_text)
 
-def autopics_task():
-    try:
-        while True:
-            name = db.autopic.find_one({"name": "on"})
-            if name:
-                chat_history = MATRIX.get_chat_history(chat_id=int(PICS_ID), limit=300)
-                all_processed = False  
 
-                for message in chat_history:
-                    if message.photo:                        
-                        try:                      
-                            photo=MATRIX.download_media(message=message.photo)
-                            MATRIX.set_profile_photo(photo=photo)
-                            os.remove(photo)
-                        except Exception as e:
-                            print(f"Error setting profile photo: {e}")
-                            BOT.send_message(chat_id=int(LOG_CHANNEL), text=f"Error setting profile photo: {e}")
-                        
-                        photos = [p for p in MATRIX.get_chat_photos("me")]
-                        MATRIX.delete_profile_photos(photos[1].file_id)
-                        time.sleep(int(PIC_TIME))
-                        
-                all_processed = TRUE                    
-                if all_processed:
-                    print("All photos processed. Restarting loop...")
-                    time.sleep(int(PIC_TIME))
-                    continue
-            else:
-                break
-        
-    except Exception as e:
-        BOT.send_message(chat_id=int(LOG_CHANNEL), text=f"Error processing photos: {e}")
-    except FloodWait as e:
-        BOT.send_message(chat_id=int(LOG_CHANNEL), text=f"flood = {e}")
-    
 def start_bots():
     bots_restarted = []
     bots_errors = {}
@@ -94,9 +60,7 @@ def start_bots():
 if __name__ == "__main__":
     try:        
         start_bots()    
-        idle()           
-        autopics_task()        
-         # This will keep the bot running        
+        idle()                   
     except Exception as e:
         print(f"{e}")
     
