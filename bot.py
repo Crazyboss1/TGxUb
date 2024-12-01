@@ -60,14 +60,14 @@ def start_bots():
         bots_restarted.append("┠ BOT          ")    
     except Exception as e:
         bots_errors["┠ BOT"] = f"❌ {str(e)}"
-        print(f"BOT ERROR - {e}")
+        print(f"BOT ERROR - {e}\n{traceback.format_exc()}")
         pass
     try:        
         matrix.start()        
         bots_restarted.append("┖ UB")
     except Exception as e:
         bots_errors["┖ UB"] = f"❌ {str(e)}"
-        print(f"UB ERROR \n {e}")
+        print(f"UB ERROR \n {e}\n{traceback.format_exc()}")
         pass    
     send_restart_message(bots_restarted, bots_errors)
     
