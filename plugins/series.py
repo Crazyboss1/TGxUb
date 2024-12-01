@@ -1,6 +1,5 @@
 import re
 import asyncio
-from plugins.matrix import matrix
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
@@ -24,9 +23,9 @@ def extract_series_details(text):
     return None, None, None, None
 
 
-async def send_to_bot_and_wait(matrix):
+async def send_to_bot_and_wait():
     global first_link, last_link, series_name, language, season, quality
-    await matrix.send_message(bot_username, text=f"/batch {first_link} {last_link}")
+    await Client.send_message(bot_username, text=f"/batch {first_link} {last_link}")
 
     # Wait for the bot to process and respond
     await asyncio.sleep(5)
@@ -52,7 +51,7 @@ async def send_to_bot_and_wait(matrix):
     quality = None
 
 
-@matrix.on_message(filters.channel & filters.chat(channel_username) & filters.text)
+@Client.on_message(filters.channel & filters.chat(channel_username) & filters.text)
 async def listen_channel(client: Client, message: Message):
     global first_link, last_link, series_name, language, season, quality
     text = message.text
@@ -62,4 +61,4 @@ async def listen_channel(client: Client, message: Message):
     elif text.startswith("SEND"):
         last_link = message.link
         # Send message to bot and wait for response
-        await send_to_bot_and_wait(matrix)
+        await send_to_bot_and_wait()
