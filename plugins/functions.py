@@ -3,7 +3,6 @@ import re
 import os
 from os import environ
 import asyncio
-from plugins.matrix import matrix
 from info import ADMINS
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -95,7 +94,7 @@ async def get_poster(query, bulk=False, id=False, file=None):
     }
 
 
-@matrix.on_message(filters.command("ipost", CMD))
+@Client.on_message(filters.command("ipost", CMD))
 async def ipost(client, message):
     query = message.text.split(" ", 1)
     
@@ -138,7 +137,7 @@ async def ipost(client, message):
         reply_markup=reply_markup
     )
 
-@matrix.on_callback_query(filters.regex(r"^iimdb#"))
+@Client.on_callback_query(filters.regex(r"^iimdb#"))
 async def imdb_selection_callback(client, callback_query):
     imdb_id = callback_query.data.split("#")[1]
     if callback_query.from_user.id not in ADMINS:
@@ -179,7 +178,7 @@ async def imdb_selection_callback(client, callback_query):
     await callback_query.answer("Movie details successfully posted to channels.")
     await callback_query.message.edit("Movie details successfully posted to channel ✅")
 
-@matrix.on_message(filters.command('mpost', CMD))
+@Client.on_message(filters.command('mpost', CMD))
 async def manual_post(client, message):
     try:
         if message.from_user.id not in ADMINS:
@@ -243,7 +242,7 @@ async def manual_post(client, message):
     except Exception as e:
         await message.edit(f"An error occurred: {str(e)}")
 
-@matrix.on_message(filters.command('spost', CMD))
+@Client.on_message(filters.command('spost', CMD))
 async def smart_post(client, message):
     try:
         if message.from_user.id not in ADMINS:
@@ -272,7 +271,7 @@ async def smart_post(client, message):
     except Exception as e:
         await message.edit(f"An error occurred: {str(e)}")
 
-@matrix.on_callback_query(filters.regex(r"^simdb#"))
+@Client.on_callback_query(filters.regex(r"^simdb#"))
 async def handle_simdb_selection(client, callback_query):
     try:
         if callback_query.from_user.id not in ADMINS:
