@@ -8,6 +8,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.enums import ParseMode
 from imdb import IMDb
+from info import CMD
 
 POST_CHANNELS = list(map(int, (channel.strip() for channel in environ.get('POST_CHANNELS', '-1002377345015').split(','))))
 SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/SpidySeries')
