@@ -1,7 +1,25 @@
+import time
+import re
+import os
+from os import environ
+import asyncio
+from plugins.matrix import matrix
+from info import ADMINS
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.enums import ParseMode
+
+POST_CHANNELS = list(map(int, (channel.strip() for channel in environ.get('POST_CHANNELS', '-1002377345015').split(','))))
+SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/SpidySeries')
+
 
 @matrix.on_message(filters.command("ipost", CMD))
 async def ipost(client, message):
     query = message.text.split(" ", 1)
+    
+    if message.from_user.id not in ADMINS:
+        return
+
     if len(query) < 2:
         return await message.edit("<b>Usage:</b> .ipost <movie_name>\n\nExample: .ipost Money Heist")
     
@@ -41,6 +59,9 @@ async def ipost(client, message):
 @matrix.on_callback_query(filters.regex(r"^iimdb#"))
 async def imdb_selection_callback(client, callback_query):
     imdb_id = callback_query.data.split("#")[1]
+    if callback_query.from_user.id not in ADMINS:
+        return
+
     movie = await get_poster(imdb_id, id=True)
     if not movie:
         return await callback_query.message.edit("Failed to retrieve IMDb data.")
@@ -50,7 +71,7 @@ async def imdb_selection_callback(client, callback_query):
     url = movie['url']
     languages = movie['languages']
     genres = movie['genres']
-    search_link = f"tg://resolve?domain={temp.U_NAME}&start=search_{title.replace(' ', '_')}_{year}"
+    search_link = f"tg://resolve?domain=SpidyMoviez_bot&start=search_{title.replace(' ', '_')}_{year}"
     response_text = (
         f"<b>✅ {title} ({year})</b>\n\n"
         f"🔊 {languages}\n"
@@ -79,6 +100,9 @@ async def imdb_selection_callback(client, callback_query):
 @matrix.on_message(filters.command('mpost', CMD))
 async def manual_post(client, message):
     try:
+        if message.from_user.id not in ADMINS:
+            return
+
         if len(message.text.split()) < 2:
             return await message.edit("Please provide title.\nFormat:\n.mpost Movie.Name.Year #Language\nor\n.mpost Movie.Name.Year 🔊 Language1, Language2\nor\n.mpost Movie.Name.Year")
         
@@ -114,7 +138,7 @@ async def manual_post(client, message):
             response_text = f"<b>✅ {display_title}</b>"
         
         # Create search link and keyboard
-        search_link = f"tg://resolve?domain={temp.U_NAME}&start=search_{search_title}"
+        search_link = f"tg://resolve?domain=SpidyMoviez_bot&start=search_{search_title}"
         keyboard = InlineKeyboardMarkup([[
             InlineKeyboardButton("Click Here To Search", url=search_link)]
         ])
@@ -140,6 +164,9 @@ async def manual_post(client, message):
 @matrix.on_message(filters.command('spost', CMD))
 async def smart_post(client, message):
     try:
+        if message.from_user.id not in ADMINS:
+            return
+
         if len(message.text.split()) < 2:
             return await message.edit("Please provide a title.\nFormat: .spost Movie.Name.2024")
 
@@ -166,6 +193,9 @@ async def smart_post(client, message):
 @matrix.on_callback_query(filters.regex(r"^simdb#"))
 async def handle_simdb_selection(client, callback_query):
     try:
+        if callback_query.from_user.id not in ADMINS:
+            return
+
         imdb_id = callback_query.data.split('#')[1]
         movie = await get_poster(imdb_id, id=True)
         if not movie:
@@ -186,7 +216,7 @@ async def handle_simdb_selection(client, callback_query):
             display_title, response_text = process_language_input(text)
 
             search_title = display_title.replace(' ', '_').replace('.', '_')
-            search_link = f"tg://resolve?domain={temp.U_NAME}&start=search_{search_title}"
+            search_link = f"tg://resolve?domain=SpidyMoviez_bot&start=search_{search_title}"
             response_text += (
                 f"\n\n⭐ <a href='{movie['url']}'>IMDb Info</a>\n"
                 f"🎥 Genre:{movie.get('genres', 'N/A')}"
