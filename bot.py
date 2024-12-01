@@ -14,11 +14,12 @@ import random
 import re
 import time
 import logging.config
+import traceback
 
 logging.config.fileConfig('logging.conf')
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
-
+logging.error(traceback.format_exc())
 
 name = "main"
 PORT = "8080"
