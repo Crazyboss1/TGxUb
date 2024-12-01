@@ -263,7 +263,7 @@ async def smart_post(client, message):
             return await message.edit("No results found on IMDb.")
 
         buttons = [
-            [InlineKeyboardButton(f"{movie['title']} ({movie['year']})", callback_data=f"simdb#{movie['imdb_id']}")]
+            [InlineKeyboardButton(f"{movie['title']} ({movie['year']})", callback_data=f"simdb#{movie.movieID}")]
             for movie in search_results[:5]
         ]
         buttons.append([InlineKeyboardButton("Cancel", callback_data="cancel")])
