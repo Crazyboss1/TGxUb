@@ -9,3 +9,5 @@ pymongo
 apscheduler
 requests
 aiohttp
+git+https://github.com/Joelkb/Cinemagoer
+
