@@ -1,0 +1,11 @@
+pyrofork
+Tgcrypto
+python-dotenv
+Flask
+gunicorn
+aiohttp
+SafoneAPI
+pymongo
+apscheduler
+requests
+aiohttp
