@@ -37,6 +37,7 @@ async def log_file(bot, message):
 async def check_alivebot(_, message):
     await message.reply("I am MATRIX ser's private Assistant")
     return
+    
 @Client.on_message(filters.command("uptime")) 
 async def pingbot(_, message):    
     uptime = await get_bot_uptimebot()
@@ -52,10 +53,11 @@ from info import ADMINS, POSTERS
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.enums import ParseMode
-from imdb import Cinemagoer
+from imdb import IMDb
+
 POST_CHANNELS = list(map(int, (channel.strip() for channel in environ.get('POST_CHANNELS', '-1002377345015').split(','))))
 SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/SpidySeries')
-imdb = Cinemagoer()
+imdb = IMDb()
 
 async def get_poster(query, bulk=False, id=False, file=None):
     if not id:
@@ -302,7 +304,7 @@ async def smart_post(client, message):
         if len(message.text.split()) < 2:
             return await message.reply_text("Please provide a title.\nFormat: /spost Movie.Name.2024")
 
-        title = message.text.split(Nine, 1)[1]
+        title = message.text.split(None, 1)[1]
         display_title = re.sub(r'[._]', ' ', title)
         k = await message.reply('🔍 Searching IMDb...')
         search_results = await get_poster(display_title, bulk=True)
