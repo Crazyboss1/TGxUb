@@ -10,6 +10,7 @@ API_HASH = os.getenv("API_HASH", "a6dc1dbe3feb1c263f749ad5f95ff445")
 
 #ADMINS
 ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '6544671421 6484052423 7188908429').split()]
+POSTERS = [int(poster) if id_pattern.search(poster) else poster for poster in os.environ.get('POSTERS', '1234567890').split()] + ADMINS
 
 #Bot token and User String 
 BOT_TOKEN = os.getenv("BOT_TOKEN", "6515902214:AAF5DnMU3LcrJpglXzrbW70BrQmrRisU6D0")
