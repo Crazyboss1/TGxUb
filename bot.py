@@ -15,11 +15,16 @@ import re
 import time
 import logging.config
 import traceback
+from pymongo import MongoClient
 
 logging.config.fileConfig('logging.conf')
 logging.getLogger().setLevel(logging.INFO)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
 logging.error(traceback.format_exc())
+
+database = MongoClient(DB_URI)
+db = database.my_database
+col = db["DATA"]
 
 name = "main"
 PORT = "8080"
@@ -40,6 +45,25 @@ bot = Client(
         plugins={"root": "botplugs"}
 )
 
+async def check_up(bot):   
+    _time = int(time()) 
+    all_data = get_all_data(_time)
+    for data in all_data:
+        try:
+           await bot.delete_messages(chat_id=data["chat_id"],
+                               message_ids=data["message_id"])           
+        except Exception as e:
+           err=data
+           err["Error"]=str(e)
+           print(err)
+    delete_all_data(all_data)
+
+async def run_check_up():
+    async with bot:     
+        while True:  
+           await check_up(bot)
+           await asyncio.sleep(1)
+                
 def send_restart_message(bots_restarted, bots_errors):
     message_text = "⌬ Restarted Successfully!\n"
     for bot_name in bots_restarted:
@@ -51,6 +75,15 @@ def send_restart_message(bots_restarted, bots_errors):
     bot.send_message(chat_id=int(LOG_CHANNEL), text=message_text)
 
 
+def get_all_data(time):
+    data     = {"time":{"$lte":time}}
+    all_data = list(col.find(data))
+    return all_data
+
+def delete_all_data(all_data):
+    for data in all_data:
+        col.delete_one(data)
+            
 def start_bots():
     bots_restarted = []
     bots_errors = {}
@@ -73,7 +106,8 @@ def start_bots():
     
 if __name__ == "__main__":
     try:        
-        start_bots()    
+        start_bots()
+        asyncio.run(run_check_up())
         idle()                   
     except Exception as e:
         print(f"{e}")
