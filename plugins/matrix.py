@@ -13,7 +13,7 @@ import asyncio
 import random
 from typing import Union
 from time import time 
-from bot import save_message
+from database import save_message
 
 database = MongoClient(DB_URI)
 db = database.my_database
