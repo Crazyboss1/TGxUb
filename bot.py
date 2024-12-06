@@ -1,3 +1,4 @@
+from database import *
 from plugins.matrix import db
 from info import *
 import asyncio
@@ -74,15 +75,6 @@ def send_restart_message(bots_restarted, bots_errors):
             message_text += f"{bot_name}    {error}\n"
     bot.send_message(chat_id=int(LOG_CHANNEL), text=message_text)
 
-
-def get_all_data(time):
-    data     = {"time":{"$lte":time}}
-    all_data = list(col.find(data))
-    return all_data
-
-def delete_all_data(all_data):
-    for data in all_data:
-        col.delete_one(data)
             
 def start_bots():
     bots_restarted = []
