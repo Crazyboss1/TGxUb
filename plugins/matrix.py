@@ -31,12 +31,6 @@ id_pattern = re.compile(r'^.\d+$')
 BOT_START_TIME = time.time()
 start_time = BOT_START_TIME
 
-def save_message(message, time):
-    data = {"chat_id": message.chat.id,
-            "message_id": message.id,
-            "time": time}
-    col.insert_one(data)
-   
 
 def extract_user(message: Message) -> Union[int, str]:
     """extracts the user from a message"""
