@@ -80,7 +80,7 @@ async def get_bot_uptimetor():
     uptime_string = f"(¬‿¬)\n \n{uptime_days % 7}ᴅ : {uptime_hours % 24}ʜ : {uptime_minutes % 60}ᴍ : {uptime_seconds % 60}s"
     return uptime_string
 
-@User.on_message(filters.chat(CHATS))
+@Client.on_message(filters.chat(CHATS))
 async def delete(user, message):
     try:
        _time = int(time()) + TIME 
