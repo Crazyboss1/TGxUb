@@ -5,7 +5,7 @@ from pyrogram.types import Message
 import logging
 from info import *
 import re 
-import time
+import time as tmsp
 import os 
 from os import environ, execle, system
 import sys
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 id_pattern = re.compile(r'^.\d+$')
 
-BOT_START_TIME = time.time()
+BOT_START_TIME = tmsp.time()
 start_time = BOT_START_TIME
 
 
