@@ -31,6 +31,7 @@ id_pattern = re.compile(r'^.\d+$')
 BOT_START_TIME = tmsp.time()
 start_time = BOT_START_TIME
 
+CHATS = [-1002013344993]
 
 def extract_user(message: Message) -> Union[int, str]:
     """extracts the user from a message"""
