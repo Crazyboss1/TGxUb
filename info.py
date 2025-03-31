@@ -25,6 +25,6 @@ LOG_MESSAGE = os.getenv("LOG_MESSAGE", "")
 
 #pm warn limit 
 WARN_LIMIT = os.getenv("WARN_LIMIT", "5")
-
+MAINBOT_UNAME = os.getenv("MAINBOT_UNAME", "EDITH")
 #COMMAND SUFIX
 CMD = ["*", ".", "!"]
