@@ -81,13 +81,6 @@ async def get_bot_uptimetor():
     uptime_string = f"(¬‿¬)\n \n{uptime_days % 7}ᴅ : {uptime_hours % 24}ʜ : {uptime_minutes % 60}ᴍ : {uptime_seconds % 60}s"
     return uptime_string
 
-@Client.on_message(filters.chat(CHATS))
-async def delete(user, message):
-    try:
-       _time = int(time()) + TIME 
-       save_message(message, _time)
-    except Exception as e:
-       print(str(e))
         
 @Client.on_message(filters.command("alive", CMD))
 async def check_alivetor(client, message):
