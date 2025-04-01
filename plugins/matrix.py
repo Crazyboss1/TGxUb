@@ -5,20 +5,17 @@ from pyrogram.types import Message
 import logging
 from info import *
 import re 
-import time as tmsp
+import time
 import os 
 from os import environ, execle, system
 import sys
 import asyncio
 import random
 from typing import Union
-from time import time 
-from database import save_message
+from plugins.bot import bot as assistant
 
 database = MongoClient(DB_URI)
 db = database.my_database
-col = db["DATA"]
-
 warnings_collection = db.warnings
 authorized_collection = db.authorized_users
 sudo_collection = db.sudo_users
@@ -28,10 +25,18 @@ logger = logging.getLogger(__name__)
 
 id_pattern = re.compile(r'^.\d+$')
 
-BOT_START_TIME = tmsp.time()
+BOT_START_TIME = time.time()
 start_time = BOT_START_TIME
+# Load channel mappings from the JSON file
 
-CHATS = [-1002013344993]
+
+# Initialize the Client with user session or bot token
+matrix = Client(
+        "user_bot",
+        api_id=API_ID,
+        api_hash=API_HASH,
+        session_string=USER_SESSION        
+    )
 
 def extract_user(message: Message) -> Union[int, str]:
     """extracts the user from a message"""
@@ -69,7 +74,6 @@ def extract_user(message: Message) -> Union[int, str]:
         return (user_id, user_first_name)
     return (user_id, user_first_name)
 
-
 async def get_bot_uptimetor():
     # Calculate the uptime in seconds
     uptime_seconds = int(time.time() - start_time)
@@ -81,8 +85,7 @@ async def get_bot_uptimetor():
     uptime_string = f"(¬‿¬)\n \n{uptime_days % 7}ᴅ : {uptime_hours % 24}ʜ : {uptime_minutes % 60}ᴍ : {uptime_seconds % 60}s"
     return uptime_string
 
-        
-@Client.on_message(filters.command("alive", CMD))
+@matrix.on_message(filters.command("alive", CMD))
 async def check_alivetor(client, message):
     me = await client.get_me()
     if message.from_user.id == me.id:
@@ -90,7 +93,7 @@ async def check_alivetor(client, message):
         return
     await message.reply("Alert!  Living bot detected!")
     
-@Client.on_message(filters.command("uptime", CMD)) 
+@matrix.on_message(filters.command("uptime", CMD)) 
 async def pingtor(client, message):    
     me = await client.get_me()
     uptime = await get_bot_uptimetor()
@@ -99,7 +102,7 @@ async def pingtor(client, message):
         return 
     await message.reply_text(f"{uptime}")
         
-@Client.on_message(filters.command(["restart", "rt"], CMD))
+@matrix.on_message(filters.command(["restart", "rt"], CMD))
 async def restart_bot(client, message):
     me = await client.get_me()
     user_id = message.from_user.id                        
@@ -117,7 +120,7 @@ async def restart_bot(client, message):
     system("git pull -f && pip3 install --no-cache-dir -r requirements.txt")
     execle(sys.executable, sys.executable, "bot.py", environ)
         
-@Client.on_message(filters.command(["addsudo", "asudo"], CMD)) 
+@matrix.on_message(filters.command(["addsudo", "asudo"], CMD)) 
 async def add_sudo(client, message):
     me = await client.get_me()
     chat_type = message.chat.type
@@ -181,7 +184,7 @@ async def add_sudo(client, message):
         else:
             await message.reply(f"{e}")
                 
-@Client.on_message(filters.command(["remsudo", "rmsudo"], CMD)) 
+@matrix.on_message(filters.command(["remsudo", "rmsudo"], CMD)) 
 async def rm_sudo(client, message):  
     me = await client.get_me()
     chat_type = message.chat.type
@@ -247,7 +250,7 @@ async def rm_sudo(client, message):
         else:
             await message.reply(f"{e}")
 
-@Client.on_message(filters.command(["approve", "a"], CMD)) 
+@matrix.on_message(filters.command(["approve", "a"], CMD)) 
 async def add_approve(client, message):   
     me = await client.get_me()
     chat_type = message.chat.type
@@ -315,7 +318,7 @@ async def add_approve(client, message):
         else:
             await message.reply(f"{e}")
                 
-@Client.on_message(filters.command(["disapprove", "d"], CMD)) 
+@matrix.on_message(filters.command(["disapprove", "d"], CMD)) 
 async def rm_disapprove(client, message):  
     me = await client.get_me()
     chat_type = message.chat.type
@@ -379,7 +382,7 @@ async def rm_disapprove(client, message):
             await message.reply(f"{e}")
                 
 
-@Client.on_message(filters.private)
+@matrix.on_message(filters.private)
 async def handle_private_message(client, message):    
     me = await client.get_me()
     try:
