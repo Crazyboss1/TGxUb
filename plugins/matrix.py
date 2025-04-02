@@ -419,3 +419,77 @@ async def handle_private_message(client, message):
         user_id = message.from_user.id
         mension = message.from_user.mention
         await assistant.send_message(chat_id=LOG_MESSAGE, text=f"name: {mension} \nusername: {user_name}\nid: {user_id}\n\nmessage: {message.text}")
+
+
+from imdb import Cinemagoer
+from pyrogram.types import InputMediaPhoto
+
+ia = Cinemagoer()
+
+@Client.on_message(filters.command("imdb") & filters.user(ADMINS))
+def imdb_search(client, message):
+    if not message.reply_to_message:
+        return message.reply("Reply to a user's message to get IMDb info.")
+    
+    user = message.reply_to_message.from_user
+    query = message.text.split(None, 1)[1] if len(message.text.split()) > 1 else None
+    
+    if query:
+        search_query = query
+    elif message.reply_to_message.text:
+        search_query = message.reply_to_message.text.strip()
+    elif message.reply_to_message.document or message.reply_to_message.photo:
+        caption = message.reply_to_message.caption or ""
+        search_query = " ".join(caption.split()[:13])
+    else:
+        return message.reply("Please provide a movie or series name.")
+    
+    results = ia.search_movie(search_query)
+    if not results:
+        return message.reply("No results found.")
+    
+    movie = results[0]
+    ia.update(movie)
+    
+    title = movie.get("title", "Unknown")
+    year = movie.get("year", "Unknown")
+    genres = ", ".join(movie.get("genres", ["Unknown"]))
+    rating = movie.get("rating", "N/A")
+    cast_list = [person.get("name", "Unknown") for person in movie.get("cast", [])[:5]]
+    cast = ", ".join(cast_list) if cast_list else "No cast available"
+    poster = movie.get("full-size cover url")
+    
+    if not poster:
+        poster_text = "No poster available"
+    elif poster.startswith("http"):
+        poster_text = f"[Click here]({poster})"
+    else:
+        poster_text = "Invalid poster URL"
+    
+    if cast == "No cast available":
+        cast_text = "Cast information not available"
+    elif len(cast_list) < 3:
+        cast_text = f"Limited cast info: {cast}"
+    else:
+        cast_text = f"Top Cast: {cast}"
+    
+    msg_text = (f"IMDb Information for {user.mention}:\n"
+                f"Title: {title}\n"
+                f"Year: {year}\n"
+                f"Genres: {genres}\n"
+                f"Rating: {rating}/10\n"
+                f"{cast_text}\n"
+                f"Poster: {poster_text}")
+    
+    processing_msg = message.reply("Editing... Please wait.")
+    
+    if poster and poster.startswith("http"):
+        client.edit_message_media(
+            chat_id=message.chat.id,
+            message_id=processing_msg.message_id,
+            media=InputMediaPhoto(poster, caption=msg_text)
+        )
+    else:
+        processing_msg.edit(msg_text)
+
+
