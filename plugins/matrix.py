@@ -426,8 +426,9 @@ from pyrogram.types import InputMediaPhoto
 
 ia = Cinemagoer()
 
-@matrix.on_message(filters.command("imdb") & filters.user(ADMINS))
-def imdb_search(client, message):
+
+@matrix.on_message(filters.command("alive", CMD))
+async def imdb_search(client, message):
     if not message.reply_to_message:
         return message.reply("Reply to a user's message to get IMDb info.")
     
