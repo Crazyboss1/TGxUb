@@ -43,7 +43,8 @@ def start_bots():
     
     try:
         BOT.start()
-        bots_restarted.append("┠ BOT          ")    
+        bots_restarted.append("┠ BOT ") 
+        print("bot started")
     except Exception as e:
         bots_errors["┠ BOT"] = f"❌ {str(e)}"
         print(f"BOT ERROR - {e}")
@@ -51,6 +52,7 @@ def start_bots():
     try:        
         MATRIX.start()        
         bots_restarted.append("┖ UB")
+        print("matrix started")
     except Exception as e:
         bots_errors["┖ UB"] = f"❌ {str(e)}"
         print(f"UB ERROR \n {e}")
